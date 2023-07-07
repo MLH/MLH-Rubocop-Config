@@ -1,0 +1,144 @@
+require: 
+  - rubocop-rspec
+  - rubocop-rails
+  - rubocop-performance
+
+Layout/FirstHashElementIndentation:
+  Description: Enforces consistent indentation for the first key in a hash literal
+  EnforcedStyle: consistent
+  Enabled: true
+
+Layout/MultilineMethodCallIndentation:
+  Description: Indent on multiline method call
+  EnforcedStyle: indented_relative_to_receiver
+  Enabled: true
+
+Lint/AmbiguousBlockAssociation:
+  Description: Allows change method as ambiguous block association
+  AllowedMethods: [change]
+  Enabled: true
+
+Metrics/AbcSize:
+  Description: Setting Max AbcSize to 30, default of 17 is arbitrary and too low
+  Max: 30
+  Enabled: false
+
+Metrics/BlockLength:
+  Description: Allow block to have any length
+  Enabled: false
+
+Metrics/ClassLength:
+  Description: Allow classes of any length
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Description: Disabaling the cop since it can be arbitrary
+  Enabled: false
+
+Metrics/MethodLength:
+  Description: Allow method to have any length
+  Enabled: false
+
+Naming/MemoizedInstanceVariableName:
+  Description: Allows instance variable name to be different than method name
+  Enabled: false
+
+Naming/VariableNumber:
+  Description: Makes sure that all numbered variables use snake case for their numbering.
+  EnforcedStyle: snake_case
+  CheckSymbols: false
+  Enabled: true
+
+# To do: Resolve the offense Style/Documentation
+Style/Documentation:
+  Description: Disabaling documentation
+  Enabled: false
+
+Style/HashSyntax:
+  Description: Force use of the 1.9 syntax for hash with no mixed keys
+  EnforcedStyle: ruby19_no_mixed_keys
+  Enabled: true
+
+Style/RegexpLiteral:
+  Description: Allow forward slashes within regular expressions
+  AllowInnerSlashes: true
+  Enabled: true
+
+Style/SymbolArray:
+  Description: Force arrays of symbols to use bracket notation
+  EnforcedStyle: brackets
+  Enabled: true
+
+Style/TernaryParentheses:
+  Description: Require parentheses in ternary conditions when they are complex
+  EnforcedStyle: require_parentheses_when_complex
+  Enabled: true
+
+Style/WordArray:
+  Description: Force arrays of words to use bracket notation instead of %w
+  EnforcedStyle: brackets
+  Enabled: true
+
+Rails/Blank:
+  Description: Allows usage of nil, empty and present
+  NilOrEmpty: false
+  NotPresent: false
+  UnlessPresent: false
+  Enabled: true
+
+Rails/FilePath:
+  Description: Enable argument type for file path joining
+  EnforcedStyle: arguments
+  Enabled: true
+
+Rails/LexicallyScopedActionFilter:
+  Description: Disable the cop as it has conflict with Lint/UselessMethodDefinition
+  Enabled: false
+
+Rails/NotNullColumn:
+  Description: Disable not null column to avoid error due to rubocop
+  Enabled: false
+  
+Rails/SkipsModelValidations:
+  Description: Allows update and update_columns for faster execution
+  AllowedMethods: ['update_all']
+  Enabled: true
+
+RSpec/AnyInstance:
+  Description: Allow stubbing instance of a class
+  Enabled: false
+
+RSpec/ContextWording:
+  Description: Does not restrict starting context wording using when, with or without
+  Enabled: false
+
+RSpec/ExampleLength:
+  Description: Allow test example to have any length
+  Enabled: false
+
+RSpec/MultipleExpectations: 
+  Description: Allow tests to contain multiple expectations 
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Description: Does not limit the number of let to an arbitrary number
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Description: Allow compact and nested style of children definitions at classes and modules
+  Enabled: false
+
+Style/FormatStringToken:
+  Description: Enforces template style for formatting strings
+  EnforcedStyle: template
+  Enabled: true
+
+Style/NumericPredicate:
+  Description: Allows the use of comparison operator
+  EnforcedStyle: comparison
+  Enabled: true
+
+Style/SymbolProc:
+  Description: Allows block for method with arguments
+  AllowMethodsWithArguments: true
+  Enabled: true
