@@ -8,7 +8,7 @@ To use the MLH Rubocop Configuration in your Ruby project, follow these steps:
 
 1. Add the MLH Rubocop Configuration gem to your Gemfile:
    ```ruby
-   gem "mlh-rubocop-config", git: "https://github.com/MLH/MLH-Rubocop-Config.git"
+   gem "mlh-rubocop-config"
    ```
 
 2. In your project's `.rubocop.yml` file, include the MLH Rubocop Configuration by using the inherit_gem directive:
