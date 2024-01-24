@@ -2,6 +2,7 @@ require:
   - rubocop-rspec
   - rubocop-rails
   - rubocop-performance
+  - rubocop-factory_bot
 
 Layout/FirstHashElementIndentation:
   Description: Enforces consistent indentation for the first key in a hash literal
