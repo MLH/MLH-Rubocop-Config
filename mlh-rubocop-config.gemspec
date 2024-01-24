@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.files = Dir['{**/}{.*,*}'].select { |path| File.file?(path) && path !~ /^(?:pkg|build)/ }
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = '>= 2.6.0'
+  spec.required_ruby_version = '>= 3.0'
 
   spec.add_dependency 'rubocop'
   spec.add_dependency 'rubocop-performance'

@@ -124,6 +124,10 @@ RSpec/MultipleMemoizedHelpers:
   Description: Does not limit the number of let to an arbitrary number
   Enabled: false
 
+RSpec/NestedGroups:
+  Description: Limites the allowed nested example groups
+  Max: 4
+
 Style/ClassAndModuleChildren:
   Description: Allow compact and nested style of children definitions at classes and modules
   Enabled: false
