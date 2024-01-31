@@ -40,6 +40,10 @@ Metrics/MethodLength:
   Description: Allow method to have any length
   Enabled: false
 
+Metrics/PerceivedComplexity:
+  Description: Disabaling the cop since it can be arbitrary
+  Enabled: false
+
 Naming/MemoizedInstanceVariableName:
   Description: Allows instance variable name to be different than method name
   Enabled: false
