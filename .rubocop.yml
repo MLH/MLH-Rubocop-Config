@@ -2,6 +2,7 @@ require:
   - rubocop-rspec
   - rubocop-rails
   - rubocop-performance
+  - rubocop-factory_bot
 
 Layout/FirstHashElementIndentation:
   Description: Enforces consistent indentation for the first key in a hash literal
@@ -37,6 +38,10 @@ Metrics/CyclomaticComplexity:
 
 Metrics/MethodLength:
   Description: Allow method to have any length
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Description: Disabaling the cop since it can be arbitrary
   Enabled: false
 
 Naming/MemoizedInstanceVariableName:
@@ -123,6 +128,10 @@ RSpec/MultipleExpectations:
 RSpec/MultipleMemoizedHelpers:
   Description: Does not limit the number of let to an arbitrary number
   Enabled: false
+
+RSpec/NestedGroups:
+  Description: Limites the allowed nested example groups
+  Max: 4
 
 Style/ClassAndModuleChildren:
   Description: Allow compact and nested style of children definitions at classes and modules
