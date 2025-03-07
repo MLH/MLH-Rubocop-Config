@@ -3,6 +3,8 @@ require:
   - rubocop-rails
   - rubocop-performance
   - rubocop-factory_bot
+  - rubocop-rspec_rails
+  - ./lib/custom/rack_utils_status_code
 
 Layout/FirstHashElementIndentation:
   Description: Enforces consistent indentation for the first key in a hash literal
@@ -150,4 +152,14 @@ Style/NumericPredicate:
 Style/SymbolProc:
   Description: Allows block for method with arguments
   AllowMethodsWithArguments: true
+  Enabled: true
+
+RSpecRails/HaveHttpStatus:
+  Enabled: true
+
+Rails/HttpStatus:
+  Enabled: true
+  EnforcedStyle: symbolic
+
+Custom/RackUtilsStatusCode:
   Enabled: true
