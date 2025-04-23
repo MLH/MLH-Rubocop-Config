@@ -36,33 +36,22 @@ module RuboCop
         PATTERN
 
         def on_send(node)
-          return unless in_rspec_file?(node)
+          # Only proceed if we're in an expect statement
+          expect_node = find_expect_node(node)
+          return unless expect_node
 
           rack_utils_status_code?(node) do |status_arg|
             add_offense(node, message: MSG) do |corrector|
-              parent = node.parent
-              
-              # Find the expect(...).to be(...) pattern
-              expect_node = find_expect_node(parent)
-              
-              if expect_node
-                expect_response_status_pattern?(expect_node) do |response_obj, to_method, status_sym|
-                  # Replace just the Rack::Utils.status_code part with have_http_status
-                  replacement = "expect(#{response_obj.source}).#{to_method} have_http_status(#{status_sym.source})"
-                  corrector.replace(expect_node, replacement)
-                end
+              expect_response_status_pattern?(expect_node) do |response_obj, to_method, status_sym|
+                # Replace just the Rack::Utils.status_code part with have_http_status
+                replacement = "expect(#{response_obj.source}).#{to_method} have_http_status(#{status_sym.source})"
+                corrector.replace(expect_node, replacement)
               end
             end
           end
         end
 
         private
-
-        # Check if the node is in an RSpec file
-        def in_rspec_file?(node)
-          file_path = node.location.expression.source_buffer.name
-          file_path.end_with?('_spec.rb')
-        end
 
         # Find the expect(...).to be(Rack::Utils.status_code(...)) node
         def find_expect_node(node)
