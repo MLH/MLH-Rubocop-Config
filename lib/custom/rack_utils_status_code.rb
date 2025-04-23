@@ -17,14 +17,12 @@ module RuboCop
 
         MSG = 'Prefer `have_http_status` over `Rack::Utils.status_code`.'
 
-        # @!method rack_utils_status_code?(node)
         def_node_matcher :rack_utils_status_code?, <<~PATTERN
           (send 
             (const 
               (const nil? :Rack) :Utils) :status_code $_)
         PATTERN
 
-        # @!method expect_response_status_pattern?(node)
         def_node_matcher :expect_response_status_pattern?, <<~PATTERN
           (send
             (send nil? :expect
@@ -38,16 +36,16 @@ module RuboCop
         PATTERN
 
         def on_send(node)
+          return unless in_rspec_file?(node)
+
           rack_utils_status_code?(node) do |status_arg|
             add_offense(node, message: MSG) do |corrector|
-              # Only auto-correct if it's in the pattern we expect
               parent = node.parent
               
               # Find the expect(...).to be(...) pattern
               expect_node = find_expect_node(parent)
               
               if expect_node
-                # Extract the necessary components
                 expect_response_status_pattern?(expect_node) do |response_obj, to_method, status_sym|
                   # Replace just the Rack::Utils.status_code part with have_http_status
                   replacement = "expect(#{response_obj.source}).#{to_method} have_http_status(#{status_sym.source})"
@@ -59,6 +57,12 @@ module RuboCop
         end
 
         private
+
+        # Check if the node is in an RSpec file
+        def in_rspec_file?(node)
+          file_path = node.location.expression.source_buffer.name
+          file_path.end_with?('_spec.rb')
+        end
 
         # Find the expect(...).to be(Rack::Utils.status_code(...)) node
         def find_expect_node(node)
@@ -77,7 +81,6 @@ module RuboCop
             return node
           end
 
-          # If we're inside an it block, we need to find the expect node
           if node.parent
             find_expect_node(node.parent)
           else
