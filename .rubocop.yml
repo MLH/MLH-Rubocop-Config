@@ -1,9 +1,11 @@
-require: 
+plugins:
   - rubocop-rspec
   - rubocop-rails
   - rubocop-performance
   - rubocop-factory_bot
   - rubocop-rspec_rails
+
+require:
   - ./lib/custom/rack_utils_status_code
 
 Layout/FirstHashElementIndentation:
