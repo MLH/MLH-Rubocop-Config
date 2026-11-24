@@ -5,6 +5,9 @@ require:
   - rubocop-factory_bot
   - rubocop-rspec_rails
   - ./lib/custom/rack_utils_status_code
+  - ./lib/custom/rails_env_in_model
+  - ./lib/custom/service_superclass
+  - ./lib/custom/unique_validation_without_index
 
 Layout/FirstHashElementIndentation:
   Description: Enforces consistent indentation for the first key in a hash literal
@@ -163,3 +166,20 @@ Rails/HttpStatus:
 
 Custom/RackUtilsStatusCode:
   Enabled: true
+
+Custom/UniqueValidationWithoutIndex:
+  Enabled: true
+  Include:
+    - "**/app/models/**/*.rb"
+
+Custom/RailsEnvInModel:
+  Enabled: true
+  AllowedMethods: []
+  Include:
+    - "**/app/models/**/*.rb"
+
+Custom/ServiceSuperclass:
+  Enabled: true
+  AllowedClasses: []
+  Include:
+    - "**/app/services/**/*.rb"
