@@ -10,6 +10,7 @@ module RuboCop
       # Rails/UniqueValidationWithoutIndex for an app that keeps db/structure.sql. The Rails cop
       # reads db/schema.rb and checks nothing without one. This one applies the same rule to the
       # tables and unique indexes of a PostgreSQL db/structure.sql, and does nothing without one.
+      # Like the Rails cop, it does not read an index's WHERE, so a partial unique index counts.
       #
       # @example
       #   # bad - accounts has no unique index on email
@@ -20,7 +21,7 @@ module RuboCop
           TABLE = /^CREATE TABLE (?:\w+\.)?"?(\w+)"? \((.*?)^\)/m
           COLUMN = /^\s+"?(\w+)"? /
           INDEX = /^CREATE UNIQUE INDEX \S+ ON (?:ONLY )?(?:\w+\.)?"?(\w+)"? USING \w+ \((.*?)\)(?: [A-Z].*)?;$/
-          CONSTRAINT = /^ALTER TABLE (?:ONLY )?(?:\w+\.)?"?(\w+)"?\s+ADD CONSTRAINT \S+ UNIQUE \((.*?)\)/
+          CONSTRAINT = /^ALTER TABLE (?:ONLY )?(?:\w+\.)?"?(\w+)"?\s+ADD CONSTRAINT \S+ UNIQUE(?: NULLS(?: NOT)? DISTINCT)? \((.*?)\)/
 
           Column = Struct.new(:name)
           Index = Struct.new(:columns, :expression, :unique)
@@ -55,10 +56,11 @@ module RuboCop
 
           private
 
-          # A key list of plain columns, or an expression such as lower((email)::text).
+          # A key list of plain columns, each with any ordering or operator class dropped, or an
+          # expression such as lower((email)::text).
           def index(keys)
             plain = keys.match?(/\A[\w", ]+\z/)
-            Index.new(plain ? keys.delete('"').split(', ') : [], plain ? nil : keys, true)
+            Index.new(plain ? keys.split(', ').map { |key| key[/\w+/] } : [], plain ? nil : keys, true)
           end
         end
 

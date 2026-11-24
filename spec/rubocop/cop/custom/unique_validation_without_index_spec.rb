@@ -20,10 +20,10 @@ RSpec.describe RuboCop::Cop::Custom::UniqueValidationWithoutIndex, :config do
       );
 
       ALTER TABLE ONLY public.accounts
-          ADD CONSTRAINT accounts_token_key UNIQUE (token);
+          ADD CONSTRAINT accounts_token_key UNIQUE NULLS NOT DISTINCT (token);
 
       CREATE INDEX index_accounts_on_seat ON public.accounts USING btree (seat);
-      CREATE UNIQUE INDEX index_accounts_on_email ON public.accounts USING btree (email, team_id);
+      CREATE UNIQUE INDEX index_accounts_on_email ON public.accounts USING btree (email text_pattern_ops, team_id DESC);
       CREATE UNIQUE INDEX index_accounts_on_code ON public.accounts USING btree (lower(code)) WHERE (code IS NOT NULL);
     SQL
   end
