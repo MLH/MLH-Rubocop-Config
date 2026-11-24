@@ -42,7 +42,7 @@ module RuboCop
           def self.load
             file = path
             key = file && [file, file.mtime]
-            @load = [key, file && new(file.read)] unless @load&.first == key
+            @load = [key, file && new(file.read)] unless @load && @load.first == key
             @load.last
           end
 

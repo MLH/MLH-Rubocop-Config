@@ -13,6 +13,7 @@ module RuboCop
 
         def_node_matcher :own_method?, '{def (defs self ...)}'
         def_node_matcher :singleton_body, '(sclass self $_)'
+        def_node_matcher :declared_method, '(send nil? {:public :protected :private :private_class_method} $any_def)'
 
         def on_class(node)
           return if node.parent_class || node.identifier.short_name == :ApplicationService || allowed?(node)
@@ -29,8 +30,9 @@ module RuboCop
 
         # A class named in AllowedClasses by its full name, such as Github::RepoImporter.
         def allowed?(node)
-          names = node.each_ancestor(:class, :module).map { |scope| scope.identifier.const_name }.reverse
-          cop_config.fetch('AllowedClasses', []).include?([*names, node.identifier.const_name].join('::'))
+          scopes = [node, *node.each_ancestor(:class, :module)].map(&:identifier)
+          scopes = scopes.take(scopes.index(&:absolute?) + 1) if scopes.any?(&:absolute?)
+          cop_config.fetch('AllowedClasses', []).include?(scopes.reverse.map(&:const_name).join('::'))
         end
 
         def service_name?(node)
@@ -45,10 +47,12 @@ module RuboCop
           end
         end
 
+        # The members of a body, each taken out of an inline visibility declaration such as
+        # `private def call`.
         def members(body)
           return [] unless body
 
-          body.begin_type? ? body.children : [body]
+          (body.begin_type? ? body.children : [body]).map { |member| declared_method(member) || member }
         end
       end
     end

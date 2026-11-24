@@ -194,4 +194,30 @@ RSpec.describe RuboCop::Cop::Custom::ServiceSuperclass, :config do
       RUBY
     end
   end
+
+  it 'flags call defined under an inline visibility declaration' do
+    expect_offense(<<~RUBY)
+      class RunnerService
+            ^^^^^^^^^^^^^ Inherit from ApplicationService instead of hand-rolling the entry point on a plain class.
+        public def call; end
+                   ^^^^ Inherit from ApplicationService instead of hand-rolling the entry point on a plain class.
+      end
+    RUBY
+  end
+
+  context 'with AllowedClasses naming a nested class' do
+    let(:cop_config) { { 'AllowedClasses' => ['Github::RepoImporter'] } }
+
+    it 'flags a root class of the same name declared inside the namespace' do
+      expect_offense(<<~RUBY)
+        module Github
+          class ::RepoImporter
+                ^^^^^^^^^^^^^^ Inherit from ApplicationService instead of hand-rolling the entry point on a plain class.
+            def call; end
+                ^^^^ Inherit from ApplicationService instead of hand-rolling the entry point on a plain class.
+          end
+        end
+      RUBY
+    end
+  end
 end

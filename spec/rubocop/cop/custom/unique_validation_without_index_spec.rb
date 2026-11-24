@@ -74,6 +74,8 @@ RSpec.describe RuboCop::Cop::Custom::UniqueValidationWithoutIndex, :config do
   context 'without a db/structure.sql' do
     let(:structure) { nil }
 
+    before { described_class::Schema.instance_variable_set(:@load, nil) }
+
     it 'checks nothing' do
       expect_no_offenses(model('validates :seat, uniqueness: true'))
     end
