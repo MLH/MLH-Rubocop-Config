@@ -18,10 +18,11 @@ module RuboCop
       class UniqueValidationWithoutIndex < RuboCop::Cop::Rails::UniqueValidationWithoutIndex
         # db/structure.sql in the shape the Rails cop reads from db/schema.rb.
         class Schema
-          TABLE = /^CREATE TABLE (?:\w+\.)?"?(\w+)"? \((.*?)^\)/m
+          NAME = /(?:\w+\.)?"?(\w+)"?/
+          TABLE = /^CREATE TABLE #{NAME} \((.*?)^\)/m
           COLUMN = /^\s+"?(\w+)"? /
-          INDEX = /^CREATE UNIQUE INDEX \S+ ON (?:ONLY )?(?:\w+\.)?"?(\w+)"? USING \w+ \((.*?)\)(?: [A-Z].*)?;$/
-          CONSTRAINT = /^ALTER TABLE (?:ONLY )?(?:\w+\.)?"?(\w+)"?\s+ADD CONSTRAINT \S+ UNIQUE(?: NULLS(?: NOT)? DISTINCT)? \((.*?)\)/
+          INDEX = /^CREATE UNIQUE INDEX \S+ ON (?:ONLY )?#{NAME} USING \w+ \((.*?)\)(?: [A-Z].*)?;$/
+          CONSTRAINT = /^ALTER TABLE (?:ONLY )?#{NAME}\s+ADD CONSTRAINT \S+ UNIQUE(?: NULLS(?: NOT)? DISTINCT)? \((.*?)\)/
 
           Column = Struct.new(:name)
           Index = Struct.new(:columns, :expression, :unique)
