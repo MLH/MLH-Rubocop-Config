@@ -22,7 +22,7 @@ module RuboCop
           TABLE = /^CREATE TABLE #{NAME} \((.*?)^\)/m
           COLUMN = /^\s+"?(\w+)"? /
           INDEX = /^CREATE UNIQUE INDEX \S+ ON (?:ONLY )?#{NAME} USING \w+ \((.*?)\)(?: [A-Z].*)?;$/
-          CONSTRAINT = /^ALTER TABLE (?:ONLY )?#{NAME}\s+ADD CONSTRAINT \S+ UNIQUE(?: NULLS(?: NOT)? DISTINCT)? \((.*?)\)/
+          CONSTRAINT = /^ALTER TABLE (?:ONLY )?#{NAME}\s+ADD CONSTRAINT \S+ UNIQUE(?: NULLS [A-Z ]+)? \((.*?)\)/
 
           Column = Struct.new(:name)
           Index = Struct.new(:columns, :expression, :unique)
