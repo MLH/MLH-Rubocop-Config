@@ -16,7 +16,14 @@ RSpec.describe RuboCop::Cop::Custom::UniqueValidationWithoutIndex, :config do
           email character varying(255) NOT NULL,
           code text,
           token text,
-          seat integer
+          seat integer,
+          owner_id bigint,
+          "primary" boolean
+      );
+
+      CREATE TABLE audit.entries (
+          id bigint NOT NULL,
+          ref text
       );
 
       ALTER TABLE ONLY public.accounts
@@ -25,6 +32,7 @@ RSpec.describe RuboCop::Cop::Custom::UniqueValidationWithoutIndex, :config do
       CREATE INDEX index_accounts_on_seat ON public.accounts USING btree (seat);
       CREATE UNIQUE INDEX index_accounts_on_email ON public.accounts USING btree (email text_pattern_ops, team_id DESC);
       CREATE UNIQUE INDEX index_accounts_on_code ON public.accounts USING btree (lower(code)) WHERE (code IS NOT NULL);
+      CREATE UNIQUE INDEX index_accounts_on_owner ON public.accounts USING btree (owner_id) WHERE ("primary" = true);
     SQL
   end
 
@@ -32,7 +40,6 @@ RSpec.describe RuboCop::Cop::Custom::UniqueValidationWithoutIndex, :config do
     Dir.mktmpdir do |directory|
       Dir.mkdir(File.join(directory, 'db'))
       File.write(File.join(directory, 'db/structure.sql'), structure) if structure
-      described_class::Schema.instance_variable_set(:@load, nil)
       Dir.chdir(directory) { example.run }
     end
   end
@@ -70,5 +77,38 @@ RSpec.describe RuboCop::Cop::Custom::UniqueValidationWithoutIndex, :config do
     it 'checks nothing' do
       expect_no_offenses(model('validates :seat, uniqueness: true'))
     end
+  end
+
+  it 'flags a validation backed only by a partial index over some rows' do
+    expect_offense(<<~RUBY)
+      class Account < ApplicationRecord
+        validates :owner_id, uniqueness: true
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Uniqueness validation should have a unique index on the database column.
+      end
+    RUBY
+  end
+
+  it 'finds a schema-qualified table' do
+    expect_offense(<<~RUBY)
+      class Entry < ApplicationRecord
+        self.table_name = 'audit.entries'
+        validates :ref, uniqueness: true
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Uniqueness validation should have a unique index on the database column.
+      end
+    RUBY
+  end
+
+  it 'reads db/structure.sql again when it changes' do
+    expect_offense(<<~RUBY)
+      class Account < ApplicationRecord
+        validates :seat, uniqueness: true
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Uniqueness validation should have a unique index on the database column.
+      end
+    RUBY
+
+    File.write('db/structure.sql', "#{structure}CREATE UNIQUE INDEX seats ON public.accounts USING btree (seat);\n")
+    File.utime(File.atime('db/structure.sql'), File.mtime('db/structure.sql') + 60, 'db/structure.sql')
+
+    expect_no_offenses(model('validates :seat, uniqueness: true'))
   end
 end

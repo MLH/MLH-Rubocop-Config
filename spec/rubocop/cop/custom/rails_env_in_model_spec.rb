@@ -28,4 +28,21 @@ RSpec.describe RuboCop::Cop::Custom::RailsEnvInModel, :config do
       request.env['HTTP_HOST']
     RUBY
   end
+
+  context 'with AllowedMethods' do
+    let(:cop_config) { { 'AllowedMethods' => ['developer?'] } }
+
+    it 'accepts Rails.env in an allowed method and flags it in another method of the same file' do
+      expect_offense(<<~RUBY)
+        def developer?
+          Rails.env.development?
+        end
+
+        def notify
+          Sentry.capture_message(warning) if Rails.env.production?
+                                             ^^^^^^^^^ Models do not branch on Rails.env; move the environment-specific behavior to the service or lib layer the model delegates to.
+        end
+      RUBY
+    end
+  end
 end

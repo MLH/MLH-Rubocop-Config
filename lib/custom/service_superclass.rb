@@ -6,6 +6,7 @@ module RuboCop
       # Flags a service-shaped class with no superclass: one that defines `call` or `call!`
       # itself, or whose name ends in Service and that defines methods. The class name and each
       # `call` are reported, so a diff that adds either one is flagged on the line it adds.
+      # A class named in AllowedClasses is left alone.
       class ServiceSuperclass < Base
         MSG = 'Inherit from ApplicationService instead of hand-rolling the entry point on a plain class.'
         ENTRY_POINTS = [:call, :call!].freeze
@@ -14,7 +15,7 @@ module RuboCop
         def_node_matcher :singleton_body, '(sclass self $_)'
 
         def on_class(node)
-          return if node.parent_class || node.identifier.short_name == :ApplicationService
+          return if node.parent_class || node.identifier.short_name == :ApplicationService || allowed?(node)
 
           methods = owned_methods(node)
           entry_points = methods.select { |method| ENTRY_POINTS.include?(method.method_name) }
@@ -25,6 +26,12 @@ module RuboCop
         end
 
         private
+
+        # A class named in AllowedClasses by its full name, such as Github::RepoImporter.
+        def allowed?(node)
+          names = node.each_ancestor(:class, :module).map { |scope| scope.identifier.const_name }.reverse
+          cop_config.fetch('AllowedClasses', []).include?([*names, node.identifier.const_name].join('::'))
+        end
 
         def service_name?(node)
           node.identifier.short_name.end_with?('Service')

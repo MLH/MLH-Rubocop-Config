@@ -174,10 +174,12 @@ Custom/UniqueValidationWithoutIndex:
 
 Custom/RailsEnvInModel:
   Enabled: true
+  AllowedMethods: []
   Include:
     - "**/app/models/**/*.rb"
 
 Custom/ServiceSuperclass:
   Enabled: true
+  AllowedClasses: []
   Include:
     - "**/app/services/**/*.rb"

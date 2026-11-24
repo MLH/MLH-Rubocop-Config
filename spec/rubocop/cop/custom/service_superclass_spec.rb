@@ -174,4 +174,24 @@ RSpec.describe RuboCop::Cop::Custom::ServiceSuperclass, :config do
       end
     RUBY
   end
+
+  context 'with AllowedClasses' do
+    let(:cop_config) { { 'AllowedClasses' => ['Github::RepoImporter'] } }
+
+    it 'accepts an allowed class and flags another class in the same file' do
+      expect_offense(<<~RUBY)
+        module Github
+          class RepoImporter
+            def call; end
+          end
+
+          class UserImporter
+                ^^^^^^^^^^^^ Inherit from ApplicationService instead of hand-rolling the entry point on a plain class.
+            def call; end
+                ^^^^ Inherit from ApplicationService instead of hand-rolling the entry point on a plain class.
+          end
+        end
+      RUBY
+    end
+  end
 end
