@@ -5,6 +5,8 @@ require:
   - rubocop-factory_bot
   - rubocop-rspec_rails
   - ./lib/custom/rack_utils_status_code
+  - ./lib/custom/rails_env_in_model
+  - ./lib/custom/service_superclass
   - ./lib/custom/unique_validation_without_index
 
 Layout/FirstHashElementIndentation:
@@ -169,3 +171,13 @@ Custom/UniqueValidationWithoutIndex:
   Enabled: true
   Include:
     - "**/app/models/**/*.rb"
+
+Custom/RailsEnvInModel:
+  Enabled: true
+  Include:
+    - "**/app/models/**/*.rb"
+
+Custom/ServiceSuperclass:
+  Enabled: true
+  Include:
+    - "**/app/services/**/*.rb"
